@@ -1,0 +1,23 @@
+synopsis:     ""
+description:  ""
+name:         "ltl"
+opam-version: "2.0"
+maintainer:   ""
+authors:      "Peter"
+homepage:     ""
+dev-repo:     ""
+bug-reports:  ""
+doc:          ""
+
+license:      "GPL 3"
+
+depends: [
+  "coq"           { >= "8.11.0" }
+  "dune"          { >= "2.8.0"  }
+]
+
+pin-depends: [
+  
+]
+
+build: [ "dune" "build" "-p" name "-j" jobs ]

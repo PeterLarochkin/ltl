@@ -1,0 +1,6 @@
+(coq.theory
+ (name ltl)
+ (package ltl) 
+)
+
+(include_subdirs qualified)

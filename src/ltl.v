@@ -24,9 +24,14 @@ Require Export Relations.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
-
-Variables (state : Set) (label : Set) (init_state : state -> Prop)
-  (transition : label -> relation state) (fair : label -> Prop). 
+(* Print relation.
+relation = fun A : Type => A -> A -> Prop
+	 : Type -> Type *)
+Variables (state : Set)     
+          (label : Set) 
+          (init_state : state -> Prop)
+          (transition : label -> relation state) 
+          (fair : label -> Prop). 
 
 (**************************** transitions  **********************************)
 
@@ -45,6 +50,7 @@ Inductive none_or_one_step (s : state) : state -> Prop :=
 
 CoInductive stream : Set :=
     cons_str : state -> stream -> stream.
+  
 
 Definition head_str (str : stream) : state :=
   match str with

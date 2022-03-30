@@ -57,7 +57,7 @@ Lemma trans_leads_to :
  leads_to_via C D E str ->
  leads_to_via (fun str : stream state => A str \/ C str)
    (fun str : stream state => B str \/ D str) E str.
-intros A B C D E; cofix.
+intros A B C D E. cofix trans_leads_to'.
 intro str; case str; clear str.
 intros s str H1 H2; constructor.
 intro H; elim H; clear H.
@@ -68,8 +68,8 @@ intro H_C.
 elim (H H_C); clear H.
 constructor 1; auto.
 constructor 2; auto.
-unfold leads_to_via in trans_leads_to; unfold implies in trans_leads_to.
-apply trans_leads_to.
+unfold leads_to_via in trans_leads_to'. unfold implies in trans_leads_to'.
+apply trans_leads_to'.
 inversion H1; assumption.
 inversion H2; assumption.
 Qed.

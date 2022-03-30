@@ -25,6 +25,7 @@ Variables (state label : Set) (transition : label -> relation state)
   (init_state : state -> Prop) (fair : label -> Prop).
 
 
+
 Notation Stream := (stream state) (only parsing).
 Notation State_formula := (state_formula state) (only parsing).
 Notation Stream_formula := (stream_formula state) (only parsing).
@@ -96,7 +97,7 @@ constructor 2; assumption.
 Qed.
 
 
-
+(* Lemma 4.9 *)
 Lemma one_step_leads_to :
  forall P Q : state_formula state,
  (forall s : state, P s -> enabled (fair_step transition fair) s) ->
@@ -107,35 +108,51 @@ Lemma one_step_leads_to :
  state2stream_formula P str ->
  until (state2stream_formula P) (state2stream_formula Q) str.
 
-
-unfold fairstr in |- *; unfold infinitely_often in |- *;
+unfold fairstr in |- *. unfold infinitely_often in |- *;
  unfold leads_to in |- *.
-intros P Q H_enabled leads_P_Q str H_trace H_fair H_P; generalize H_trace H_P.
+intros P Q H_enabled leads_P_Q str H_trace H_fair H_P. generalize H_trace H_P.
 inversion_clear H_fair.
 clear H_trace H_P H0 str.
+(* делаем индукцию по выражению H *)
+(* induction H; case str. *)
 elim H; clear H.
+(* разобъем str по конструкции *)
+clear s0 str0. intro str. case str.
+ 
+clear str. 
 
-clear s0 str0; intro str; case str. 
-clear str; intros s str H_fair H_trace H_P; constructor 2; auto.
-constructor 1; unfold state2stream_formula in |- *;
- apply leads_P_Q with (s := s); auto.
+intros s str H_fair H_trace H_P.
+(* воспользуемся конструктором Until, у него два аргумента поэтому появляются
+подцели *)
+ constructor 2. 
+ auto.
+ (* воспользуемся еще одним конструктором Untill, у него один аргумента *)
+constructor 1. unfold state2stream_formula in |- *;
+apply leads_P_Q with (s := s); auto.
+(* generalize H_fair. *)
+(* у нас есть 1 -> 2, нужно доказать 3
+elim сделает целями теперь 1 -> 3, 2 *)
 elim H_fair.
-intros a fair_a H_trans; clear fair_a; apply C_trans with (a := a); auto.
-apply H_enabled; auto.
-unfold state2stream_formula in |- *; simpl in |- *;
+intros a fair_a H_trans. clear fair_a.
+ apply C_trans with (a := a). 
+ auto.
+apply H_enabled. auto.
+unfold state2stream_formula in |- *. 
+simpl in |- *.
  intros s1 str1 H_ind H1 H_trace H_P.
 inversion_clear H_trace.
+(* не знаю *)
 inversion H.
 constructor 2; auto.
 apply H1; auto.
-simpl in H2; rewrite <- H2; assumption.
+simpl in H2.   rewrite <- H2; assumption.
 simpl in H2; constructor 2; auto.
-constructor 1; apply leads_P_Q with (s := s1); trivial.
+constructor 1. apply leads_P_Q with (s := s1). trivial. trivial.
 Qed.
 
-Hint Resolve one_step_leads_to.
+(* Hint Resolve one_step_leads_to. *)
 
-
+(* Theorem 4.9 *)
 Lemma always_one_step_leads_to :
  forall P Q : state_formula state,
  (forall s : state, P s -> enabled (fair_step transition fair) s) ->
@@ -147,7 +164,7 @@ Lemma always_one_step_leads_to :
 
 unfold once_until in |- *; unfold leads_to_via in |- *.
 intros P Q H_enabled leads_P_Q; unfold implies in |- *.
-cofix.
+cofix always_one_step_leads_to.
 intro str; case str; intros s str'; case str'.
 intros t tl H_trace H_fair; constructor.
 intro H.
@@ -155,5 +172,6 @@ apply one_step_leads_to; try assumption.
 inversion_clear H_trace; inversion_clear H_fair.
 apply always_one_step_leads_to; assumption.
 Qed.
+
 
 End liveness.
